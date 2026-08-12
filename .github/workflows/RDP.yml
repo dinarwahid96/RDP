@@ -1,21 +1,27 @@
-name: RDP
+name: Linux Test
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest
-    steps:
-      - name: Download ngrok
-        run: |
-          Invoke-WebRequest https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
-          Expand-Archive ngrok.zip
-          ./ngrok.exe authtoken ng-3HnY0lWSE8DbEttvqYAOKryIfGT-g1-aNcUBLtogMPFMT1PLqGsrnQ39RwnPfGpF
+    runs-on: ubuntu-latest
 
-      - name: Enable RDP
+    steps:
+      - name: Check Linux environment
+        shell: bash
         run: |
-          net user kamel123 MyStrong123 /add
-          net localgroup administrators kamel123 /add
-          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0
-          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-          ./ngrok.exe tcp 3389
+          echo "Hostname: $(hostname)"
+          echo "User: $(whoami)"
+          uname -a
+
+      - name: Run tests
+        shell: bash
+        run: |
+          echo "Running Linux tests..."
+          # Put your build/test commands here
+
+      - name: Keep runner alive briefly
+        shell: bash
+        run: |
+          sleep 300
